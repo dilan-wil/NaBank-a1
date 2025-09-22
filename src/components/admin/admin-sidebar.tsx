@@ -23,6 +23,7 @@ const adminNavItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/users", icon: Users, label: "Users" },
   { href: "/admin/transactions", icon: CreditCard, label: "Transactions" },
+  { href: "/admin/cards", icon: CreditCard, label: "Approbation cartes" },
   { href: "/admin/aml", icon: Shield, label: "AML/Fraud" },
   { href: "/admin/partners", icon: Building2, label: "Partners" },
   { href: "/admin/loans", icon: FileText, label: "Loans" },

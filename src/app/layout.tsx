@@ -5,8 +5,13 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'NaBank',
-  description: 'NeoBank Camerounaise',
+  title: "NaBank - The Future of Digital Banking",
+  description: "Experience seamless banking with instant transfers, smart savings, and business solutions designed for the modern world. FDIC insured, bank-grade security.",
+  icons: {
+    icon: '/NaBank-Icon.png',
+    shortcut: '/NaBank-Icon.png',
+    apple: '/NaBank-Icon.png',
+  },
 }
 
 export default function RootLayout({
