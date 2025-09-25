@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -41,7 +40,6 @@ export default function InvitePage() {
   const pendingRewards = mockReferrals.filter((r) => r.status === "pending").reduce((sum, r) => sum + r.reward, 0)
 
   return (
-    <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">
@@ -191,6 +189,5 @@ export default function InvitePage() {
           </Card>
         </div>
       </div>
-    </AppLayout>
   )
 }

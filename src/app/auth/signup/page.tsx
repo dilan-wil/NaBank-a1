@@ -1,38 +1,222 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import Image from "next/image";
+import { useAuth } from "@/context/auth-context";
+import { useCustomerStore } from "@/lib/store";
+import { toast } from "sonner";
+import { CustomerForm } from "@/lib/type";
+import { Progress } from "@/components/ui/progress";
+import { RenderRegistrationStep } from "@/components/auth/render-registration-step";
+import { useRouter } from "next/navigation";
+import { customerApi } from "@/lib/api";
+interface ValidationErrors {
+  [key: string]: string;
+}
 
 export default function SignupPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [formData, setFormData] = useState({
+  const [password, setPassword] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { register } = useAuth();
+  const router = useRouter();
+  const { setCustomer } = useCustomerStore();
+  const [loading, setLoading] = useState(false);
+  const totalSteps = 4;
+  const [currentStep, setCurrentStep] = useState(1);
+  const progress = (currentStep / totalSteps) * 100;
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [formData, setFormData] = useState<CustomerForm>({
+    id: "",
     firstName: "",
     lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-    agreeToTerms: false,
-  })
+    address: "",
+    city: "",
+    country: "",
+    region: "",
+    postalCode: "",
+    birthdate: "",
+    idType: "",
+    mobilePhoneNumber: "",
+    alternatePhoneNumber: "",
+    emailAddress: "",
+    customerSource: "",
+    status: "VALID",
+    customerType: "INDIVIDUAL",
+    appProductId: process.env.NEXT_PUBLIC_MANSAR_API_ID!,
+    nui: "",
+    nationality: "",
+    revenusRange: "",
+    cniNumber: "",
+    gender: "",
+  });
+
+  const validateStep = (step: number): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    switch (step) {
+      case 1:
+        if (!formData.firstName.trim())
+          newErrors.firstName = "First name is required";
+        if (!formData.lastName.trim())
+          newErrors.lastName = "Last name is required";
+        if (!formData.birthdate)
+          newErrors.dateOfBirth = "Date of birth is required";
+        else {
+          const age =
+            new Date().getFullYear() -
+            new Date(formData.birthdate).getFullYear();
+          if (age < 18)
+            newErrors.dateOfBirth = "You must be at least 18 years old";
+        }
+        if (!formData.gender) newErrors.gender = "Gender is required";
+        break;
+
+      case 2:
+        if (!formData.address.trim()) newErrors.address = "Address is required";
+        // if (!formData.latitude || !formData.longitude) {
+        //   newErrors.address =
+        //     "Please select a valid address from the suggestions";
+        // }
+        break;
+
+      case 3:
+        if (!formData.idType) newErrors.idType = "ID Type is required";
+
+        if (!formData.cniNumber.trim())
+          newErrors.niuNumber = "CNI number is required";
+        if (formData.cniNumber.length < 8)
+          newErrors.cniNumber = "CNI number must be at least 8 characters";
+
+        if (!formData.nui.trim())
+          newErrors.niuNumber = "NIU number is required";
+        if (formData.nui.length < 8)
+          newErrors.niuNumber = "NIU number must be at least 8 characters";
+        break;
+
+      case 4:
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!formData.emailAddress.trim())
+          newErrors.email = "Email is required";
+        else if (!emailRegex.test(formData.emailAddress))
+          newErrors.email = "Please enter a valid email address";
+
+        const phoneRegex = /^6[0-9]{8}$/;
+        if (!formData.mobilePhoneNumber.trim())
+          newErrors.phone = "Phone number is required";
+        else if (!phoneRegex.test(formData.mobilePhoneNumber)) {
+          newErrors.phone =
+            "Phone number must start with 6 and be 9 digits total";
+        }
+
+        if (!password) newErrors.password = "Password is required";
+        else if (password.length < 8)
+          newErrors.password = "Password must be at least 8 characters";
+
+        if (!confirmPassword)
+          newErrors.confirmPassword = "Please confirm your password";
+        else if (password !== confirmPassword) {
+          newErrors.confirmPassword = "Passwords do not match";
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    console.log(formData);
+    if (password !== confirmPassword) {
+      toast.error("Passwords are different");
+      return;
+    }
+    try {
+      const response = await register(
+        formData.emailAddress,
+        formData.mobilePhoneNumber,
+        password,
+        { role: "personal" }
+      );
+
+      const customer = await customerApi.create({
+        ...formData,
+        id: response.data.id,
+      });
+
+      router.push("/personal/dashboard");
+      // console.log(response);
+    } catch {
+      toast.error("An error occured, please try again");
+    } finally {
+      setLoading(false);
+    }
     // Mock signup - redirect to OTP verification
-    window.location.href = "/auth/verify-otp"
-  }
+    // window.location.href = "/auth/verify-otp";
+  };
+
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case 1:
+        return "Personal Information";
+      case 2:
+        return "Address";
+      case 3:
+        return "NIU Number";
+      case 4:
+        return "Account Credentials";
+      default:
+        return "";
+    }
+  };
+
+  const getStepDescription = () => {
+    switch (currentStep) {
+      case 1:
+        return "Let's start with your basic information";
+      case 2:
+        return "Where are you located?";
+      case 3:
+        return "We need your NIU for verification";
+      case 4:
+        return "Create your account credentials";
+      default:
+        return "";
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
@@ -40,142 +224,66 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">N</span>
+              <span className="text-primary-foreground font-bold text-xl">
+                N
+              </span>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-          <CardDescription>Join NaBank and start your financial journey</CardDescription>
+          <CardTitle className="text-2xl font-bold">{getStepTitle()}</CardTitle>
+          <CardDescription>{getStepDescription()}</CardDescription>
+
+          {/* Progress Indicator */}
+          <div className="mt-4 space-y-2">
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>
+                Step {currentStep} of {totalSteps}
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="w-full" />
+          </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  placeholder="John"
-                  value={formData.firstName}
-                  onChange={(e) => handleInputChange("firstName", e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Doe"
-                  value={formData.lastName}
-                  onChange={(e) => handleInputChange("lastName", e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+237 6XX XXX XXX"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Create a strong password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
-                  required
-                />
+          <div className="space-y-6">
+            <RenderRegistrationStep
+              currentStep={currentStep}
+              password={password}
+              confirmPassword={confirmPassword}
+              errors={errors}
+              handleInputChange={handleInputChange}
+              setPassword={setPassword}
+              setConfirmPassword={setConfirmPassword}
+              formData={formData}
+            />
+
+            {/* Navigation Buttons */}
+            <div className="flex gap-2">
+              {currentStep > 1 && (
                 <Button
                   type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  variant="outline"
+                  onClick={handleBack}
+                  className="flex-1 bg-transparent"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
                 </Button>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
+              )}
+
+              {currentStep < totalSteps ? (
+                <Button type="button" onClick={handleNext} className="flex-1">
+                  Next
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-              </div>
+              ) : (
+                <Button type="button" onClick={handleSubmit} className="flex-1">
+                  Complete Registration
+                </Button>
+              )}
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={formData.agreeToTerms}
-                onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked as boolean)}
-                required
-              />
-              <Label htmlFor="terms" className="text-sm">
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-              </Label>
-            </div>
-            <Button type="submit" className="w-full">
-              Create Account
-            </Button>
-          </form>
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="text-primary hover:underline">
-                Sign in
-              </Link>
-            </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

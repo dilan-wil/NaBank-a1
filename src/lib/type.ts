@@ -1,0 +1,75 @@
+export type CustomerForm = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  country: string;
+  region: string;
+  postalCode: string;
+  birthdate: string; // ISO date string, e.g., "2025-09-25"
+  idType: "PASSPORT" | "CNI" | "DRIVER_LICENCE" | ""; // adjust as needed
+  mobilePhoneNumber: string;
+  alternatePhoneNumber?: string;
+  emailAddress: string;
+  customerSource?: string;
+  status: "VALID" | "INVALID" | "PENDING"; // adjust based on API
+  customerType: "INDIVIDUAL" | "BUSINESS";
+  appProductId: string;
+  nui: string;
+  nationality: string;
+  revenusRange: string;
+  cniNumber: string;
+  gender: "MALE" | "FEMALE" | "";
+};
+
+export type Customer = {
+  id: string;
+  deleted: boolean;
+  deletedOn: string | null;
+  created: string;
+  updated: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  country: string;
+  region: string;
+  postalCode: string;
+  birthdate: string; // ISO string
+  idType: "PASSPORT" | "CNI" | "OTHER";
+  mobilePhoneNumber: string;
+  alternatePhoneNumber?: string;
+  emailAddress: string;
+  customerSource?: string;
+  status: "VALID" | "INVALID" | "PENDING";
+  customerType: "INDIVIDUAL" | "COMPANY";
+  applicationProductId: string;
+  nui?: string;
+  nationality?: string;
+  revenusRange?: string;
+  cniNumber?: string;
+  coreBankingId?: string;
+  mapleradId?: string;
+  gender: "MALE" | "FEMALE" | "OTHER";
+  applicationProductDetail?: {
+    id: string;
+    name: string;
+    description?: string;
+    logo?: string;
+    primaryColor?: string;
+    status: boolean;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      phone?: string;
+      email?: string;
+      avatar?: string;
+      roleType?: string; // e.g., "DEV"
+      structureName?: string;
+      organisationProfileId?: string;
+      subscriptionPlanId?: string;
+    };
+  };
+};

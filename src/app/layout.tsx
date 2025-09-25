@@ -1,30 +1,43 @@
-import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { Analytics } from "@vercel/analytics/next";
+import "./globals.css";
+import { AuthProvider } from "@/context/auth-context";
+import { Toaster } from "@/components/ui/sonner";
+import GoogleMapsProvider from "@/components/google-maps-provider";
 
 export const metadata: Metadata = {
   title: "NaBank - The Future of Digital Banking",
-  description: "Experience seamless banking with instant transfers, smart savings, and business solutions designed for the modern world. FDIC insured, bank-grade security.",
+  description:
+    "Experience seamless banking with instant transfers, smart savings, and business solutions designed for the modern world. FDIC insured, bank-grade security.",
   icons: {
-    icon: '/NaBank-Icon.png',
-    shortcut: '/NaBank-Icon.png',
-    apple: '/NaBank-Icon.png',
+    icon: "/NaBank-Icon.png",
+    shortcut: "/NaBank-Icon.png",
+    apple: "/NaBank-Icon.png",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+        />
+      </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
+        <AuthProvider>
+          <GoogleMapsProvider>{children}</GoogleMapsProvider>
+          <Toaster />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }
