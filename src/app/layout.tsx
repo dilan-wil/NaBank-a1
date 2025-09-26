@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <AuthProvider>
           <GoogleMapsProvider>{children}</GoogleMapsProvider>
-          <Toaster />
+          <Toaster richColors theme="light" toastOptions={{}} />
         </AuthProvider>
         <Analytics />
       </body>

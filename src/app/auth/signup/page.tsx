@@ -165,26 +165,30 @@ export default function SignupPage() {
       return;
     }
     try {
+      const customer = await customerApi.create({
+        ...formData,
+      });
+
       const response = await register(
         formData.emailAddress,
         formData.mobilePhoneNumber,
         password,
-        { role: "personal" }
+        { role: "personal", mansarID: customer.id }
       );
 
-      console.log(response);
-      const customer = await customerApi.create({
-        ...formData,
-        id: response.data.user.id,
-      });
+      // console.log(response);
 
       setCustomer(customer);
+
+      if (!response.data.session) {
+        router.push("/auth/login");
+      }
 
       router.push("/personal/dashboard");
       // console.log(response);
     } catch (err: any) {
       // Check if Axios error
-      console.log(err);
+      // console.log(err);
       if (err.response?.data?.error?.message) {
         toast.error(err.response.data.error.message); // show API error
       } else {

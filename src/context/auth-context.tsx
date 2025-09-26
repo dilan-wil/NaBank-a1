@@ -12,7 +12,8 @@ type AuthContextType = {
     password: string,
     options: any
   ) => Promise<{ error: any; data: any }>;
-  login: (identifier: string, password: string) => Promise<{ error: any }>;
+  login: (identifier: string, password: string) => Promise<any>;
+  updateUser: (data: any) => Promise<{ data: any; error: any }>;
   loginWithOtp: (identifier: string) => Promise<{ error: any }>;
   logout: () => Promise<void>;
 };
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      console.log(session?.user);
+      // console.log(session?.user);
       setUser(session?.user ?? null);
       setLoading(false);
     };
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log(session?.user);
+      // console.log(session?.user);
       setUser(session?.user ?? null);
     });
 
@@ -79,7 +80,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
       });
     }
-    return { error: response.error };
+    console.log(response);
+    return response;
   };
 
   // 📌 Login with OTP (email or phone)
@@ -93,6 +95,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error: response.error };
   };
 
+  const updateUser = async (datas: any) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: { ...datas },
+    });
+    console.log({ data, error });
+    return { data, error };
+  };
+
   // 📌 Logout
   const logout = async () => {
     await supabase.auth.signOut();
@@ -101,7 +111,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, register, login, loginWithOtp, logout }}
+      value={{
+        user,
+        loading,
+        register,
+        login,
+        loginWithOtp,
+        logout,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

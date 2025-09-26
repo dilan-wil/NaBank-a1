@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,19 +15,46 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/context/auth-context";
+import { useCustomerStore } from "@/lib/store";
+import { customerApi } from "@/lib/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
   const [rememberMe, setRememberMe] = useState(false);
+  const { login, updateUser } = useAuth();
+  const { setCustomer } = useCustomerStore();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await login(email, password);
+      if (!response.data.user) {
+        toast.error(`${response.error.message}. Please check your mails`);
+        return;
+      }
+      const customer = await customerApi.getById(
+        response.data.user.user_metadata.mansarID
+      );
+      setCustomer(customer);
+      router.push("/personal/dashboard");
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
     // Mock login - redirect to dashboard
-    window.location.href = "/dashboard";
+    // window.location.href = "/dashboard";
   };
 
   return (
@@ -99,8 +126,8 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <Button type="submit" className="w-full">
-              Sign In
+            <Button disabled={loading} type="submit" className="w-full">
+              {loading && <Loader2 className="animate-spin" />} Sign In
             </Button>
           </form>
           <div className="mt-6 text-center">
