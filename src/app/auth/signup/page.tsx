@@ -159,35 +159,40 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(formData);
+    // console.log(formData);
     if (password !== confirmPassword) {
       toast.error("Passwords are different");
       return;
     }
     try {
-      // const response = await register(
-      //   formData.emailAddress,
-      //   formData.mobilePhoneNumber,
-      //   password,
-      //   { role: "personal" }
-      // );
+      const response = await register(
+        formData.emailAddress,
+        formData.mobilePhoneNumber,
+        password,
+        { role: "personal" }
+      );
 
+      console.log(response);
       const customer = await customerApi.create({
         ...formData,
-        id: "sdssfdf",
+        id: response.data.user.id,
       });
 
-      console.log;
+      setCustomer(customer);
 
       router.push("/personal/dashboard");
       // console.log(response);
-    } catch {
-      toast.error("An error occured, please try again");
+    } catch (err: any) {
+      // Check if Axios error
+      console.log(err);
+      if (err.response?.data?.error?.message) {
+        toast.error(err.response.data.error.message); // show API error
+      } else {
+        toast.error("An error occurred, please try again");
+      }
     } finally {
       setLoading(false);
     }
-    // Mock signup - redirect to OTP verification
-    // window.location.href = "/auth/verify-otp";
   };
 
   const getStepTitle = () => {

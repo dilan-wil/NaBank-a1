@@ -5,8 +5,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_MANSAR_BASE_URL!;
 const TOKEN_URL = process.env.NEXT_PUBLIC_MANSAR_GET_TOKEN_URL!;
 const MANSAR_API_ID = process.env.NEXT_PUBLIC_MANSAR_API_ID!;
 const MANSAR_API_KEY = process.env.NEXT_PUBLIC_MANSAR_API_KEY!;
-const USERNAME = process.env.MANSAR_USERNAME!;
-const PASSWORD = process.env.MANSAR_PASSWORD!;
+const USERNAME = process.env.NEXT_PUBLIC_MANSAR_USERNAME!;
+const PASSWORD = process.env.NEXT_PUBLIC_MANSAR_PASSWORD!;
 
 let cachedToken: string | null = null;
 let tokenExpiresAt: number | null = null;

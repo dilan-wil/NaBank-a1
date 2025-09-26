@@ -45,7 +45,7 @@ export const RenderRegistrationStep = ({
   const handleAddressSelect = () => {
     if (addressRef.current) {
       const place = addressRef.current.getPlace();
-      console.log(place);
+      // console.log(place);
       if (place && place.address_components) {
         place.address_components.forEach((component: any) => {
           const types = component.types;
