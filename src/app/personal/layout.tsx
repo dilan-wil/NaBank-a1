@@ -1,4 +1,4 @@
-import "./globals.css";
+import ProtectedRoute from "@/components/protected-route";
 import { AppLayout } from "@/components/layout/app-layout";
 
 // export const metadata: Metadata = {
@@ -12,10 +12,16 @@ import { AppLayout } from "@/components/layout/app-layout";
 //   },
 // };
 
-export default function RootLayout({
+export default function PersonalDashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AppLayout>{children}</AppLayout>;
+  return (
+    <>
+      <ProtectedRoute allowedRoles={["personal"]}>
+        <AppLayout>{children}</AppLayout>
+      </ProtectedRoute>
+    </>
+  );
 }

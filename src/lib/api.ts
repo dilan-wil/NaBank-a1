@@ -19,7 +19,7 @@ async function getToken(): Promise<string> {
     return cachedToken; // use cached token
   }
 
-  const res = await axios.post(`${tokenUrl}`, {
+  const res = await axios.post(tokenUrl!, {
     username: MANSAR_USERNAME,
     password: MANSAR_PASSWORD,
   });
@@ -36,6 +36,7 @@ async function getToken(): Promise<string> {
 // ================== Customer API ==================
 async function getHeaders() {
   const token = await getToken();
+  console.log(token);
   return {
     Authorization: `Bearer ${token}`,
     apiId: MANSAR_API_ID,

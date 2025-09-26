@@ -165,17 +165,19 @@ export default function SignupPage() {
       return;
     }
     try {
-      const response = await register(
-        formData.emailAddress,
-        formData.mobilePhoneNumber,
-        password,
-        { role: "personal" }
-      );
+      // const response = await register(
+      //   formData.emailAddress,
+      //   formData.mobilePhoneNumber,
+      //   password,
+      //   { role: "personal" }
+      // );
 
       const customer = await customerApi.create({
         ...formData,
-        id: response.data.id,
+        id: "sdssfdf",
       });
+
+      console.log;
 
       router.push("/personal/dashboard");
       // console.log(response);
@@ -223,11 +225,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">
-                N
-              </span>
-            </div>
+            <Image src="/NaBank-Icon.png" width={50} height={50} alt="icon" />
           </div>
           <CardTitle className="text-2xl font-bold">{getStepTitle()}</CardTitle>
           <CardDescription>{getStepDescription()}</CardDescription>
@@ -264,6 +262,7 @@ export default function SignupPage() {
                   variant="outline"
                   onClick={handleBack}
                   className="flex-1 bg-transparent"
+                  disabled={loading}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
@@ -276,11 +275,25 @@ export default function SignupPage() {
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button type="button" onClick={handleSubmit} className="flex-1">
-                  Complete Registration
+                <Button
+                  disabled={loading}
+                  type="button"
+                  onClick={handleSubmit}
+                  className="flex-1"
+                >
+                  {loading && <Loader2 className="animate-spin" />}Complete
+                  Registration
                 </Button>
               )}
             </div>
+          </div>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {"Already have an account? "}
+              <Link href="/auth/login" className="text-primary hover:underline">
+                Login
+              </Link>
+            </p>
           </div>
         </CardContent>
       </Card>

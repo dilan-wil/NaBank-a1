@@ -6,6 +6,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
 import { Toaster } from "@/components/ui/sonner";
 import GoogleMapsProvider from "@/components/google-maps-provider";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "NaBank - The Future of Digital Banking",
@@ -25,12 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         />
-      </head>
+      </Head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <AuthProvider>
           <GoogleMapsProvider>{children}</GoogleMapsProvider>
