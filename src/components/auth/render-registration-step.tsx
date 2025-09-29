@@ -303,9 +303,10 @@ export const RenderRegistrationStep = ({
                   type="tel"
                   placeholder="6XXXXXXXX"
                   value={formData.mobilePhoneNumber}
-                  onChange={(e) =>
-                    handleInputChange("mobilePhoneNumber", e.target.value)
-                  }
+                  onChange={(e) => {
+                    handleInputChange("mobilePhoneNumber", e.target.value);
+                    handleInputChange("alternatePhoneNumber", e.target.value);
+                  }}
                   className={cn(
                     "rounded-l-none",
                     errors.mobilePhoneNumber && "border-red-500"

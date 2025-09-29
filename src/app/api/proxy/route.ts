@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
   const token = await getToken();
   const body = await req.json();
   const { path, method = "POST", data, params } = body;
+  console.log(data);
 
   try {
     const res = await axios({

@@ -24,7 +24,7 @@ import { CustomerForm } from "@/lib/type";
 import { Progress } from "@/components/ui/progress";
 import { RenderRegistrationStep } from "@/components/auth/render-registration-step";
 import { useRouter } from "next/navigation";
-import { customerApi } from "@/lib/api";
+import { customerAccountApi, customerApi } from "@/lib/api";
 interface ValidationErrors {
   [key: string]: string;
 }
@@ -44,7 +44,6 @@ export default function SignupPage() {
   const progress = (currentStep / totalSteps) * 100;
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [formData, setFormData] = useState<CustomerForm>({
-    id: "",
     firstName: "",
     lastName: "",
     address: "",
@@ -159,15 +158,13 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // console.log(formData);
+    console.log(formData);
     if (password !== confirmPassword) {
       toast.error("Passwords are different");
       return;
     }
     try {
-      const customer = await customerApi.create({
-        ...formData,
-      });
+      const customer = await customerApi.create(formData);
 
       const response = await register(
         formData.emailAddress,
@@ -176,16 +173,14 @@ export default function SignupPage() {
         { role: "personal", mansarID: customer.id }
       );
 
+      await customerAccountApi.create("CURRENT", customer.id);
       // console.log(response);
-
       setCustomer(customer);
-
       if (!response.data.session) {
         router.push("/auth/login");
       }
-
       router.push("/personal/dashboard");
-      // console.log(response);
+      console.log(response);
     } catch (err: any) {
       // Check if Axios error
       // console.log(err);
