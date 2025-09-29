@@ -85,10 +85,24 @@ export const customerAccountApi = {
   },
 
   // Get customer by ID
-  getById: async (id: string) => {
+  getAccountsByCustomerId: async (
+    id?: string,
+    page?: number,
+    size?: number
+  ) => {
     const res = await axios.post("/api/proxy", {
-      path: `/customer/${id}`,
+      path: "/accountCustomer/customer",
       method: "GET",
+      params: { id },
+    });
+    return res.data;
+  },
+
+  getAccountBalance: async (accountNumber: string) => {
+    const res = await axios.post("/api/proxy", {
+      path: "/accountCustomer/getBalance",
+      method: "GET",
+      params: { accountNumber },
     });
     return res.data;
   },

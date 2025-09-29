@@ -72,3 +72,37 @@ export type Customer = {
     };
   };
 };
+
+type CustomerDetail = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  mobilePhoneNumber: string;
+  status: "VALID" | "INVALID" | string;
+  gender: "MALE" | "FEMALE" | string;
+  customerAppInUseName: string;
+};
+
+export type Account = {
+  id: string;
+  deleted: boolean;
+  deletedOn: string | null;
+  created: string;
+  updated: string;
+  accountNumber: string;
+  coreBankingAccountId: string;
+  applicationProductId: string;
+  status: "OPEN" | "CLOSED" | "PENDING" | string;
+  accountType: "CURRENT" | "SAVING" | "FIXED" | string;
+  customerId: string;
+  signersId: string[];
+  signersDetails: any; // can refine later if you have structure
+  customerDetail: CustomerDetail;
+  balanceDetails: AccountBalanceDetail | null;
+};
+
+export type AccountBalanceDetail = {
+  currency: string;
+  amount: number;
+};

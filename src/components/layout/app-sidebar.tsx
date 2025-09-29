@@ -53,9 +53,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
         <div className="flex items-center gap-2">
           {/* <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-primary-foreground font-bold text-sm">N</span>
-          </div>
-          <span className="font-bold text-lg text-foreground">NaBank</span> */}
-          <Image src="/NaBank-Logo.png" alt="logo" width={100} height={100} />
+          </div> */}
+          <Image src="/NaBank-Icon.png" alt="logo" width={25} height={25} />
+          <span className="font-bold text-lg text-foreground">NaBank</span>
         </div>
       </div>
 

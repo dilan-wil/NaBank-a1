@@ -5,8 +5,15 @@ import { QuickActions } from "@/components/dashboard/quick-actions";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { NewsFeed } from "@/components/dashboard/news-feed";
 import { mockAccounts } from "@/lib/mock-data";
+import { useCustomerStore } from "@/lib/store";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
+  const { accounts } = useCustomerStore();
+  const [loadingAccounts, setLoadingAccounts] = useState(!accounts);
+  useEffect(() => {
+    if (accounts) setLoadingAccounts(false);
+  }, [accounts]);
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -34,9 +41,19 @@ export default function DashboardPage() {
 
       {/* Account Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {mockAccounts.map((account) => (
+        {loadingAccounts ? (
+          <>
+            <AccountCardSkeleton />
+            <AccountCardSkeleton />
+          </>
+        ) : (
+          accounts?.map((account) => (
+            <AccountCard key={account.id} account={account} />
+          ))
+        )}
+        {/* {accounts?.map((account) => (
           <AccountCard key={account.id} account={account} />
-        ))}
+        ))} */}
       </div>
 
       {/* Quick Actions */}
@@ -48,5 +65,24 @@ export default function DashboardPage() {
         <NewsFeed />
       </div>
     </div>
+  );
+}
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+function AccountCardSkeleton() {
+  return (
+    <Card className="bg-gradient-to-br from-primary to-primary/40 text-primary-foreground animate-pulse">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium opacity-50">
+          Loading...
+        </CardTitle>
+        <div className="h-4 w-4 rounded-full bg-primary-foreground/30" />
+      </CardHeader>
+      <CardContent>
+        <div className="h-7 w-28 bg-primary-foreground/30 rounded mb-2" />
+        <div className="h-3 w-40 bg-primary-foreground/20 rounded" />
+      </CardContent>
+    </Card>
   );
 }
