@@ -47,7 +47,7 @@ export default function DepositsPage() {
       // Mock API call - simulate deposit processing
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      setCurrentStep("success");
+      // setCurrentStep("success");
       //   toast({
       //     title: "Deposit Successful!",
       //     description: `Your deposit of ${Number(

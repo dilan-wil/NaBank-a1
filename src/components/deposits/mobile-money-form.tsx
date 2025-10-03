@@ -30,10 +30,10 @@ interface MobileMoneyFormProps {
 }
 
 const mobileNetworks = [
-  { id: "mtn", name: "MTN Mobile Money", color: "bg-yellow-500" },
-  { id: "orange", name: "Orange Money", color: "bg-orange-500" },
-  { id: "express", name: "Express Union", color: "bg-blue-500" },
-  { id: "nexttel", name: "Nexttel", color: "bg-purple-500" },
+  { id: "MTN", name: "MTN Mobile Money", color: "bg-yellow-500" },
+  { id: "OM", name: "Orange Money", color: "bg-orange-500" },
+  // { id: "express", name: "Express Union", color: "bg-blue-500" },
+  // { id: "nexttel", name: "Nexttel", color: "bg-purple-500" },
 ];
 
 export function MobileMoneyForm({ onBack, onSubmit }: MobileMoneyFormProps) {
