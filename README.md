@@ -76,22 +76,29 @@ Support & assistance.
 
 Frontend : Next.js (React + TypeScript), TailwindCSS
 
-Backend : Firebase (Auth, Firestore, Storage, Functions)
+Backend : Mansar (customer, accounts, cards, loans and more)
 
-Base de données : Firestore (NoSQL)
+Base de données : Mansar
 
-Authentification : Firebase Auth (email/phone + password, OTP)
+Authentification : SupaBase Auth (email + password)
 
-Intégration paiement : Mobile Money API, Banking API (mock pour démo)
+Intégration paiement : Mansar
 
 📊 Architecture du projet
 /nabank
- ├── /app              # Pages Next.js
- ├── /components       # Composants UI réutilisables
- ├── /lib              # API, utils et logique métier
- ├── /public           # Assets (favicon, logos, icônes)
- ├── /styles           # Fichiers TailwindCSS
- ├── firebase.json     # Config Firebase
+ ├── /public
+ ├── /src
+  ├── /app              # Pages Next.js
+   ├── /admin           # Admin Dashboard
+   ├── /personal        # Individual customer's dashboard
+   ├── /business        # Business customer's dashboard
+   ├── /api             # Api's routes
+   ├── /auth            # Auth pages
+  ├── /components       # Composants UI réutilisables
+  ├── /hooks            # Context components
+  ├── /lib              # API, utils et logique métier
+  ├── /public           # Assets (favicon, logos, icônes)
+  ├── /styles           # Fichiers TailwindCSS
  └── README.md         # Documentation
 
 🧪 Fonctionnalités déjà implémentées
