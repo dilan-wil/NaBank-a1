@@ -1,35 +1,35 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Minus, ArrowLeftRight, CreditCard } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Minus, ArrowLeftRight, CreditCard } from "lucide-react";
 
 const actions = [
   {
     name: "Deposit",
     icon: Plus,
     color: "bg-green-500 hover:bg-green-600",
-    href: "/deposit",
+    href: "/personal/deposit",
   },
   {
     name: "Withdraw",
     icon: Minus,
     color: "bg-red-500 hover:bg-red-600",
-    href: "/withdraw",
+    href: "/personal/transfers",
   },
   {
     name: "Transfer",
     icon: ArrowLeftRight,
     color: "bg-blue-500 hover:bg-blue-600",
-    href: "/transfers",
+    href: "/personal/transfers",
   },
   {
     name: "Cards",
     icon: CreditCard,
     color: "bg-purple-500 hover:bg-purple-600",
-    href: "/cards",
+    href: "/personal//cards",
   },
-]
+];
 
 export function QuickActions() {
   return (
@@ -55,5 +55,5 @@ export function QuickActions() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
