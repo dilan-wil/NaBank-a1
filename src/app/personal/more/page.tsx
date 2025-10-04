@@ -82,7 +82,7 @@ export default function MorePage() {
               onClick={() =>
                 handleItemSelect({
                   id: "profile",
-                  href: "/profile",
+                  href: "/personal/profile",
                 } as MenuItem)
               }
             >

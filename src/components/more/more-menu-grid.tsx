@@ -1,17 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { User, UserPlus, DollarSign, FileText, Shield, HelpCircle, Settings, Gift, Bell, Phone } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  User,
+  UserPlus,
+  DollarSign,
+  FileText,
+  Shield,
+  HelpCircle,
+  Settings,
+  Gift,
+  Bell,
+  Phone,
+} from "lucide-react";
 
 interface MenuItem {
-  id: string
-  name: string
-  description: string
-  icon: React.ComponentType<{ className?: string }>
-  color: string
-  href: string
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  href: string;
 }
 
 const menuItems: MenuItem[] = [
@@ -21,7 +32,7 @@ const menuItems: MenuItem[] = [
     description: "View and update your profile",
     icon: User,
     color: "bg-blue-100 text-blue-600",
-    href: "/profile",
+    href: "/personal/profile",
   },
   {
     id: "invite",
@@ -29,7 +40,7 @@ const menuItems: MenuItem[] = [
     description: "Share referral link and earn rewards",
     icon: UserPlus,
     color: "bg-green-100 text-green-600",
-    href: "/invite",
+    href: "/personal/invite",
   },
   {
     id: "loan",
@@ -37,7 +48,7 @@ const menuItems: MenuItem[] = [
     description: "Apply for personal or business loans",
     icon: DollarSign,
     color: "bg-purple-100 text-purple-600",
-    href: "/loan",
+    href: "/personal/loan",
   },
   {
     id: "statements",
@@ -45,7 +56,7 @@ const menuItems: MenuItem[] = [
     description: "Download account statements",
     icon: FileText,
     color: "bg-orange-100 text-orange-600",
-    href: "/statements",
+    href: "/personal/statements",
   },
   {
     id: "rewards",
@@ -53,7 +64,7 @@ const menuItems: MenuItem[] = [
     description: "View cashback and rewards",
     icon: Gift,
     color: "bg-pink-100 text-pink-600",
-    href: "/rewards",
+    href: "/personal/rewards",
   },
   {
     id: "notifications",
@@ -61,7 +72,7 @@ const menuItems: MenuItem[] = [
     description: "Manage your notifications",
     icon: Bell,
     color: "bg-yellow-100 text-yellow-600",
-    href: "/notifications",
+    href: "/personal/notifications",
   },
   {
     id: "security",
@@ -69,7 +80,7 @@ const menuItems: MenuItem[] = [
     description: "Security settings and 2FA",
     icon: Shield,
     color: "bg-red-100 text-red-600",
-    href: "/security",
+    href: "/personal/security",
   },
   {
     id: "settings",
@@ -77,7 +88,7 @@ const menuItems: MenuItem[] = [
     description: "App preferences and settings",
     icon: Settings,
     color: "bg-gray-100 text-gray-600",
-    href: "/settings",
+    href: "/personal/settings",
   },
   {
     id: "support",
@@ -85,7 +96,7 @@ const menuItems: MenuItem[] = [
     description: "Get help and contact support",
     icon: HelpCircle,
     color: "bg-indigo-100 text-indigo-600",
-    href: "/support",
+    href: "/personal/support",
   },
   {
     id: "contact",
@@ -93,12 +104,12 @@ const menuItems: MenuItem[] = [
     description: "Phone, email, and live chat",
     icon: Phone,
     color: "bg-teal-100 text-teal-600",
-    href: "/contact",
+    href: "/personal/contact",
   },
-]
+];
 
 interface MoreMenuGridProps {
-  onItemSelect: (item: MenuItem) => void
+  onItemSelect: (item: MenuItem) => void;
 }
 
 export function MoreMenuGrid({ onItemSelect }: MoreMenuGridProps) {
@@ -111,7 +122,9 @@ export function MoreMenuGrid({ onItemSelect }: MoreMenuGridProps) {
           onClick={() => onItemSelect(item)}
         >
           <CardContent className="p-6 text-center">
-            <div className={`w-12 h-12 rounded-lg ${item.color} flex items-center justify-center mx-auto mb-3`}>
+            <div
+              className={`w-12 h-12 rounded-lg ${item.color} flex items-center justify-center mx-auto mb-3`}
+            >
               <item.icon className="h-6 w-6" />
             </div>
             <h3 className="font-medium mb-1 text-sm">{item.name}</h3>
@@ -120,5 +133,5 @@ export function MoreMenuGrid({ onItemSelect }: MoreMenuGridProps) {
         </Card>
       ))}
     </div>
-  )
+  );
 }
