@@ -105,56 +105,52 @@ export default function DepositsPage() {
   );
 
   return (
-    <AppLayout>
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Deposit Funds
-            </h1>
-            <p className="text-muted-foreground">
-              Add money to your NaBank account
-            </p>
-          </div>
-          {currentStep !== "method" && currentStep !== "success" && (
-            <Button variant="outline" onClick={handleStartNew}>
-              Change Method
-            </Button>
-          )}
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Deposit Funds</h1>
+          <p className="text-muted-foreground">
+            Add money to your NaBank account
+          </p>
         </div>
-
-        {/* Deposit Flow */}
-        <div className="max-w-2xl mx-auto">
-          {currentStep === "method" && (
-            <DepositMethodSelection onMethodSelect={handleMethodSelect} />
-          )}
-
-          {currentStep === "form" && selectedMethod === "bank" && (
-            <BankDepositForm
-              onBack={() => setCurrentStep("method")}
-              onSubmit={handleFormSubmit}
-            />
-          )}
-
-          {currentStep === "form" && selectedMethod === "mobile" && (
-            <MobileMoneyForm
-              onBack={() => setCurrentStep("method")}
-              onSubmit={handleFormSubmit}
-            />
-          )}
-
-          {currentStep === "confirm" && depositData && (
-            <DepositConfirmation
-              depositData={depositData}
-              onConfirm={handleConfirmDeposit}
-              onEdit={() => setCurrentStep("form")}
-            />
-          )}
-
-          {currentStep === "success" && renderSuccessScreen()}
-        </div>
+        {currentStep !== "method" && currentStep !== "success" && (
+          <Button variant="outline" onClick={handleStartNew}>
+            Change Method
+          </Button>
+        )}
       </div>
-    </AppLayout>
+
+      {/* Deposit Flow */}
+      <div className="max-w-2xl mx-auto">
+        {currentStep === "method" && (
+          <DepositMethodSelection onMethodSelect={handleMethodSelect} />
+        )}
+
+        {currentStep === "form" && selectedMethod === "bank" && (
+          <BankDepositForm
+            onBack={() => setCurrentStep("method")}
+            onSubmit={handleFormSubmit}
+          />
+        )}
+
+        {currentStep === "form" && selectedMethod === "mobile" && (
+          <MobileMoneyForm
+            onBack={() => setCurrentStep("method")}
+            onSubmit={handleFormSubmit}
+          />
+        )}
+
+        {currentStep === "confirm" && depositData && (
+          <DepositConfirmation
+            depositData={depositData}
+            onConfirm={handleConfirmDeposit}
+            onEdit={() => setCurrentStep("form")}
+          />
+        )}
+
+        {currentStep === "success" && renderSuccessScreen()}
+      </div>
+    </div>
   );
 }
