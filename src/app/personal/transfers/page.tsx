@@ -13,6 +13,7 @@ import { Transaction } from "@/lib/type";
 import { customerAccountApi, transactionsApi } from "@/lib/api";
 import { useCustomerStore } from "@/lib/store";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type TransferStep = "select" | "form" | "confirm" | "success";
 
@@ -22,6 +23,7 @@ export default function TransfersPage() {
   const [transferData, setTransferData] = useState<any>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { accounts, customer } = useCustomerStore();
 
   useEffect(() => {
@@ -142,10 +144,7 @@ export default function TransfersPage() {
         </Button>
         <Button
           variant="outline"
-          onClick={() =>
-            (window.location.href =
-              "/personal/henrietteyoudom@gmail.comdashboard")
-          }
+          onClick={() => router.push("/personal/dashboard")}
           className="w-full max-w-sm"
         >
           Back to Dashboard

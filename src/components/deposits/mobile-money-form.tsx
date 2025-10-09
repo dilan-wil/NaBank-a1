@@ -94,8 +94,8 @@ export function MobileMoneyForm({ onBack, onSubmit }: MobileMoneyFormProps) {
     onSubmit({
       method: "mobile",
       amount,
-      network: selectedNetwork?.name,
-      phoneNumber: `+237${phoneNumber}`,
+      apiUserTransfer: network,
+      phoneNumber: `237${phoneNumber}`,
     });
   };
 
@@ -144,7 +144,7 @@ export function MobileMoneyForm({ onBack, onSubmit }: MobileMoneyFormProps) {
             <div className="space-y-2">
               <Label htmlFor="network">Select Network</Label>
               <Select value={network} onValueChange={setNetwork}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Choose your mobile money provider" />
                 </SelectTrigger>
                 <SelectContent>
@@ -185,7 +185,7 @@ export function MobileMoneyForm({ onBack, onSubmit }: MobileMoneyFormProps) {
         </Card>
 
         {/* Instructions */}
-        {network && phoneNumber && (
+        {/* {network && phoneNumber && (
           <Card>
             <CardHeader className="flex flex-row items-center gap-3">
               <Smartphone className="h-5 w-5 text-orange-600" />
@@ -244,7 +244,7 @@ export function MobileMoneyForm({ onBack, onSubmit }: MobileMoneyFormProps) {
               </div>
             </CardContent>
           </Card>
-        )}
+        )} */}
 
         <Button type="submit" className="w-full" size="lg">
           Continue to Confirmation

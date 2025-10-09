@@ -10,12 +10,14 @@ interface DepositConfirmationProps {
   depositData: any;
   onConfirm: () => void;
   onEdit: () => void;
+  loading: boolean;
 }
 
 export function DepositConfirmation({
   depositData,
   onConfirm,
   onEdit,
+  loading,
 }: DepositConfirmationProps) {
   const getDepositIcon = () => {
     switch (depositData.method) {

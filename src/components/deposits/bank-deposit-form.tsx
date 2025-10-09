@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Building2, QrCode, Copy, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { useCustomerStore } from "@/lib/store";
 // import { useToast } from "@/hooks/use-toast";
 
 interface BankDepositFormProps {
@@ -23,6 +24,7 @@ interface BankDepositFormProps {
 }
 
 export function BankDepositForm({ onBack, onSubmit }: BankDepositFormProps) {
+  const { accounts } = useCustomerStore();
   const [amount, setAmount] = useState("");
   const [showQR, setShowQR] = useState(false);
   //   const { toast } = useToast();
@@ -111,7 +113,7 @@ export function BankDepositForm({ onBack, onSubmit }: BankDepositFormProps) {
             <div className="bg-muted p-4 rounded-lg space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Bank Name</span>
-                <span className="font-medium">{bankDetails.bankName}</span>
+                <span className="font-medium">NaBank</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">
@@ -119,7 +121,7 @@ export function BankDepositForm({ onBack, onSubmit }: BankDepositFormProps) {
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono font-medium">
-                    {bankDetails.accountNumber}
+                    {accounts![0].accountNumber}
                   </span>
                   <Button
                     type="button"

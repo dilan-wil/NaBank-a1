@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Minus, ArrowLeftRight, CreditCard } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const actions = [
   {
@@ -32,6 +33,7 @@ const actions = [
 ];
 
 export function QuickActions() {
+  const router = useRouter();
   return (
     <Card>
       <CardHeader>
@@ -44,7 +46,7 @@ export function QuickActions() {
               key={action.name}
               variant="outline"
               className="h-20 flex-col gap-2 hover:scale-105 transition-transform bg-transparent"
-              onClick={() => (window.location.href = action.href)}
+              onClick={() => router.push(action.href)}
             >
               <div className={`p-2 rounded-lg ${action.color}`}>
                 <action.icon className="h-5 w-5 text-white" />

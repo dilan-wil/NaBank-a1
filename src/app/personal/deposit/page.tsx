@@ -9,6 +9,9 @@ import { DepositConfirmation } from "@/components/deposits/deposit-confirmation"
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { customerAccountApi } from "@/lib/api";
+import { useCustomerStore } from "@/lib/store";
 // import { useToast } from "@/hooks/use-toast";
 
 type DepositStep = "method" | "form" | "confirm" | "success";
@@ -29,7 +32,10 @@ interface DepositData {
 export default function DepositsPage() {
   const [currentStep, setCurrentStep] = useState<DepositStep>("method");
   const [selectedMethod, setSelectedMethod] = useState<DepositMethod>(null);
-  const [depositData, setDepositData] = useState<DepositData | null>(null);
+  const [depositData, setDepositData] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { customer } = useCustomerStore();
+  const router = useRouter();
   //   const { toast } = useToast();
 
   const handleMethodSelect = (method: DepositMethod) => {
@@ -38,37 +44,32 @@ export default function DepositsPage() {
   };
 
   const handleFormSubmit = (data: DepositData) => {
+    console.log(data);
     setDepositData(data);
     setCurrentStep("confirm");
   };
 
   const handleConfirmDeposit = async () => {
-    try {
-      // Mock API call - simulate deposit processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    setLoading(true);
 
-      // setCurrentStep("success");
-      //   toast({
-      //     title: "Deposit Successful!",
-      //     description: `Your deposit of ${Number(
-      //       depositData?.amount || 0
-      //     ).toLocaleString()} XAF has been processed.`,
-      //   });
+    try {
+      const succeed =
+        await customerAccountApi.depositIntoMainAccountUsingMobileMoney(
+          customer!.id,
+          depositData
+        );
       toast.success(
         `Your deposit of ${Number(
           depositData?.amount || 0
         ).toLocaleString()} XAF has been processed.`
       );
+      setCurrentStep("success");
     } catch (error) {
-      //   toast({
-      //     title: "Deposit Failed",
-      //     description:
-      //       "There was an error processing your deposit. Please try again.",
-      //     variant: "destructive",
-      //   });
       toast.error(
         "There was an error processing your deposit. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,7 +96,7 @@ export default function DepositsPage() {
         </Button>
         <Button
           variant="outline"
-          onClick={() => (window.location.href = "/dashboard")}
+          onClick={() => router.push("/personal/dashboard")}
           className="w-full max-w-sm"
         >
           Back to Dashboard
@@ -146,6 +147,7 @@ export default function DepositsPage() {
             depositData={depositData}
             onConfirm={handleConfirmDeposit}
             onEdit={() => setCurrentStep("form")}
+            loading={loading}
           />
         )}
 

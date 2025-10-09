@@ -46,7 +46,7 @@ export default function PersonalDashboardLayout({
         const userAccounts = await customerAccountApi.getAccountsByCustomerId(
           customer.id
         );
-        console.log(userAccounts);
+        // console.log(userAccounts);
         setAccounts(userAccounts.content);
       } catch (err) {
         console.error("Failed to fetch accounts", err);
