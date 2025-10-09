@@ -1,39 +1,73 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatCurrency, mockAccounts } from "@/lib/mock-data"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, mockAccounts } from "@/lib/mock-data";
+import { useCustomerStore } from "@/lib/store";
+import { customerAccountApi } from "@/lib/api";
+import { Account } from "@/lib/type";
 
 interface NaBankTransferFormProps {
-  onSubmit: (data: any) => void
+  onSubmit: (data: any) => void;
 }
 
 export function NaBankTransferForm({ onSubmit }: NaBankTransferFormProps) {
+  const { accounts } = useCustomerStore();
+  const [balances, setBalances] = useState<Record<string, number>>({});
   const [formData, setFormData] = useState({
-    fromAccount: "",
-    recipientAccount: "",
+    fromAccountNumber: "",
+    toAccountNumber: "",
     amount: "",
     description: "",
-  })
+  });
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const result: Record<string, number> = {};
+      for (const account of accounts!) {
+        const balance = await customerAccountApi.getAccountBalance(
+          account.accountNumber
+        );
+        result[account.id] = balance.amount;
+      }
+      setBalances(result);
+    };
+
+    fetchBalances();
+  }, [accounts]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     onSubmit({
       ...formData,
       type: "nabank",
-    })
-  }
+    });
+  };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const getBalance = async (account: Account) => {
+    const balance = await customerAccountApi.getAccountBalance(
+      account.accountNumber
+    );
+    console.log(balance);
+    return balance;
+  };
 
   return (
     <Card>
@@ -44,14 +78,22 @@ export function NaBankTransferForm({ onSubmit }: NaBankTransferFormProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="fromAccount">From Account</Label>
-            <Select value={formData.fromAccount} onValueChange={(value) => handleInputChange("fromAccount", value)}>
-              <SelectTrigger>
+            <Select
+              value={formData.fromAccountNumber}
+              onValueChange={(value) =>
+                handleInputChange("fromAccountNumber", value)
+              }
+            >
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select source account" />
               </SelectTrigger>
               <SelectContent>
-                {mockAccounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    {account.name} - {formatCurrency(account.balance, account.currency)}
+                {accounts?.map((account) => (
+                  <SelectItem key={account.id} value={account.accountNumber}>
+                    {account.accountType} -{" "}
+                    {balances[account.id] !== undefined
+                      ? formatCurrency(balances[account.id], "XAF")
+                      : "••••••"}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -63,8 +105,10 @@ export function NaBankTransferForm({ onSubmit }: NaBankTransferFormProps) {
             <Input
               id="recipientAccount"
               placeholder="Enter NaBank account number"
-              value={formData.recipientAccount}
-              onChange={(e) => handleInputChange("recipientAccount", e.target.value)}
+              value={formData.toAccountNumber}
+              onChange={(e) =>
+                handleInputChange("toAccountNumber", e.target.value)
+              }
               required
             />
           </div>
@@ -99,5 +143,5 @@ export function NaBankTransferForm({ onSubmit }: NaBankTransferFormProps) {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

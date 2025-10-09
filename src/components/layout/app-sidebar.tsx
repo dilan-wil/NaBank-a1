@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useCustomerStore } from "@/lib/store";
 
 const navigation = [
   { name: "Dashboard", href: "/personal/dashboard", icon: Home },
@@ -40,7 +41,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ className }: AppSidebarProps) {
   const pathname = usePathname();
-
+  const { customer } = useCustomerStore();
   return (
     <div
       className={cn(
@@ -88,10 +89,10 @@ export function AppSidebar({ className }: AppSidebarProps) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">
-              John Doe
+              {customer?.firstName} {customer?.lastName}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              john@example.com
+              {customer?.emailAddress}
             </p>
           </div>
         </div>

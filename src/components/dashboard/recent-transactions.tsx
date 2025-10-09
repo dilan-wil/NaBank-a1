@@ -51,6 +51,21 @@ export function RecentTransactions({
 }) {
   const recentTransactions = mockTransactions.slice(0, 5);
 
+  if (!transactions || transactions.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Recent Transactions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-sm text-muted-foreground">
+            No transactions found
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">

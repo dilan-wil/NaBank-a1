@@ -24,7 +24,7 @@ export default function PersonalDashboardLayout({
   const { accounts, setAccounts, customer, setCustomer } = useCustomerStore();
   const { user } = useAuth();
   useEffect(() => {
-    if (!user) return;
+    if (!user || customer) return; // Only fetch if no customer yet
 
     const fetchCustomer = async () => {
       try {
@@ -36,10 +36,10 @@ export default function PersonalDashboardLayout({
     };
 
     fetchCustomer();
-  }, [user]);
+  }, [user, customer, setCustomer]); // include setCustomer to satisfy linter
 
   useEffect(() => {
-    if (!customer?.id) return;
+    if (!customer?.id || accounts) return; // Only fetch if no accounts yet
 
     const fetchAccounts = async () => {
       try {
@@ -54,7 +54,8 @@ export default function PersonalDashboardLayout({
     };
 
     fetchAccounts();
-  }, [customer]);
+  }, [customer, accounts, setAccounts]);
+
   return (
     <>
       <ProtectedRoute allowedRoles={["personal"]}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TransferTypeSelector } from "@/components/transfers/transfer-type-selector";
 import { NaBankTransferForm } from "@/components/transfers/nabank-transfer-form";
 import { ExternalTransferForm } from "@/components/transfers/external-transfer-form";
@@ -9,6 +9,9 @@ import { TransferConfirmation } from "@/components/transfers/transfer-confirmati
 import { TransferHistory } from "@/components/transfers/transfer-history";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { Transaction } from "@/lib/type";
+import { transactionsApi } from "@/lib/api";
+import { useCustomerStore } from "@/lib/store";
 
 type TransferStep = "select" | "form" | "confirm" | "success";
 
@@ -16,6 +19,43 @@ export default function TransfersPage() {
   const [currentStep, setCurrentStep] = useState<TransferStep>("select");
   const [selectedType, setSelectedType] = useState("");
   const [transferData, setTransferData] = useState<any>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { accounts, customer } = useCustomerStore();
+
+  useEffect(() => {
+    const getRecentTransactions = async () => {
+      if (!customer?.id) return;
+
+      // Fetch first page to get total pages
+      const firstPageResponse =
+        await transactionsApi.getTransactionsByCustomerId(
+          customer.id,
+          "2025-01-01",
+          "",
+          0,
+          10
+        );
+
+      const lastPageNumber = firstPageResponse.totalPages - 1;
+
+      // Fetch last page
+      const lastPageResponse =
+        await transactionsApi.getTransactionsByCustomerId(
+          customer.id,
+          "2025-10-01",
+          "",
+          lastPageNumber,
+          10
+        );
+
+      setTransactions(lastPageResponse.content);
+    };
+
+    const from = new Date("2025-10-01"); // from date
+    const to = new Date("2025-10-08"); // to date
+
+    getRecentTransactions();
+  }, []);
 
   const handleTypeSelect = (type: string) => {
     setSelectedType(type);
@@ -23,14 +63,23 @@ export default function TransfersPage() {
   };
 
   const handleFormSubmit = (data: any) => {
+    console.log(data);
     setTransferData(data);
     setCurrentStep("confirm");
   };
 
-  const handleConfirmTransfer = () => {
+  const handleConfirmTransfer = async () => {
     // Mock transfer processing
     console.log("Processing transfer:", transferData);
-    setCurrentStep("success");
+    try {
+      const succeed = await transactionsApi.transferFromOneAccountToAnother(
+        transferData.description,
+        transferData
+      );
+      setCurrentStep("success");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleStartNew = () => {
@@ -67,7 +116,10 @@ export default function TransfersPage() {
         </Button>
         <Button
           variant="outline"
-          onClick={() => (window.location.href = "/dashboard")}
+          onClick={() =>
+            (window.location.href =
+              "/personal/henrietteyoudom@gmail.comdashboard")
+          }
           className="w-full max-w-sm"
         >
           Back to Dashboard
@@ -120,7 +172,7 @@ export default function TransfersPage() {
       {/* Transfer History */}
       {currentStep === "select" && (
         <div className="max-w-4xl mx-auto">
-          <TransferHistory />
+          <TransferHistory transactions={transactions} />
         </div>
       )}
     </div>

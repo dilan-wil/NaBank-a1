@@ -124,7 +124,7 @@ export interface Transaction {
   status: "PENDING" | "DONE" | "FAILED" | string;
   partnerIdTransaction: string;
   coreBankingTransactionReference: string | null;
-  transferTools: string;
+  transferTools: "CORE_BANKING" | "OM" | "MTN";
   applicationProductId: string;
   targetSavingId: string | null;
   groupSavingId: string | null;
