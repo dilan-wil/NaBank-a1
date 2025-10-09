@@ -9,18 +9,55 @@ import { useCustomerStore } from "@/lib/store";
 import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const { accounts } = useCustomerStore();
+  const { accounts, customer } = useCustomerStore();
   const [loadingAccounts, setLoadingAccounts] = useState(!accounts);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   useEffect(() => {
     if (accounts) setLoadingAccounts(false);
   }, [accounts]);
+
+  useEffect(() => {
+    const getRecentTransactions = async () => {
+      if (!customer?.id) return;
+
+      // Fetch first page to get total pages
+      const firstPageResponse =
+        await transactionsApi.getTransactionsByCustomerId(
+          customer.id,
+          "2025-01-01",
+          "",
+          0,
+          10
+        );
+
+      const lastPageNumber = firstPageResponse.totalPages - 1;
+
+      // Fetch last page
+      const lastPageResponse =
+        await transactionsApi.getTransactionsByCustomerId(
+          customer.id,
+          "2025-10-01",
+          "",
+          lastPageNumber,
+          10
+        );
+
+      setTransactions(lastPageResponse.content);
+    };
+
+    const from = new Date("2025-10-01"); // from date
+    const to = new Date("2025-10-08"); // to date
+
+    getRecentTransactions();
+  }, []);
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">
-            Good morning, John
+            Good morning, {customer?.firstName}
           </h1>
           <p className="text-muted-foreground">
             Welcome back to your NaBank dashboard
@@ -61,7 +98,7 @@ export default function DashboardPage() {
 
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentTransactions />
+        <RecentTransactions transactions={transactions} />
         <NewsFeed />
       </div>
     </div>
@@ -69,6 +106,8 @@ export default function DashboardPage() {
 }
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { transactionsApi } from "@/lib/api";
+import { Transaction } from "@/lib/type";
 
 function AccountCardSkeleton() {
   return (

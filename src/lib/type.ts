@@ -106,3 +106,32 @@ export type AccountBalanceDetail = {
   currency: string;
   amount: number;
 };
+
+export interface Transaction {
+  id: string;
+  deleted: boolean;
+  deletedOn: string | null;
+  created: string;
+  updated: string;
+  amount: number;
+  fees: number;
+  appFees: number | null;
+  customerFromId: string | null;
+  customerToId: string | null;
+  description: string | null;
+  sumar: string | null;
+  type: "DEPOSIT" | "WITHDRAWAL" | "RECEIVED_MOBILE" | string;
+  status: "PENDING" | "DONE" | "FAILED" | string;
+  partnerIdTransaction: string;
+  coreBankingTransactionReference: string | null;
+  transferTools: string;
+  applicationProductId: string;
+  targetSavingId: string | null;
+  groupSavingId: string | null;
+  fixedSavingId: string | null;
+  challengeId: string | null;
+  tontineId: string | null;
+  investmentProductId: string | null;
+  customerFromDetails: CustomerDetail | null;
+  customerToDetails: CustomerDetail | null;
+}
