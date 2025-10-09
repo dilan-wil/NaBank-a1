@@ -10,8 +10,9 @@ import { TransferHistory } from "@/components/transfers/transfer-history";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Transaction } from "@/lib/type";
-import { transactionsApi } from "@/lib/api";
+import { customerAccountApi, transactionsApi } from "@/lib/api";
 import { useCustomerStore } from "@/lib/store";
+import { toast } from "sonner";
 
 type TransferStep = "select" | "form" | "confirm" | "success";
 
@@ -20,6 +21,7 @@ export default function TransfersPage() {
   const [selectedType, setSelectedType] = useState("");
   const [transferData, setTransferData] = useState<any>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
   const { accounts, customer } = useCustomerStore();
 
   useEffect(() => {
@@ -63,22 +65,46 @@ export default function TransfersPage() {
   };
 
   const handleFormSubmit = (data: any) => {
-    console.log(data);
-    setTransferData(data);
+    // console.log({ ...data, phoneNumber: `237${data.phoneNumber}` });
+    setTransferData({ ...data, phoneNumber: `237${data.phoneNumber}` });
     setCurrentStep("confirm");
   };
 
   const handleConfirmTransfer = async () => {
     // Mock transfer processing
-    console.log("Processing transfer:", transferData);
-    try {
-      const succeed = await transactionsApi.transferFromOneAccountToAnother(
-        transferData.description,
-        transferData
-      );
-      setCurrentStep("success");
-    } catch (error) {
-      console.log(error);
+    // console.log("Processing transfer:", transferData);
+    setLoading(true);
+    switch (selectedType) {
+      case "nabank":
+        try {
+          const succeed = await transactionsApi.transferFromOneAccountToAnother(
+            transferData.description,
+            transferData
+          );
+          setCurrentStep("success");
+        } catch (error) {
+          // console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      case "external":
+        return <ExternalTransferForm onSubmit={handleFormSubmit} />;
+      case "mobile":
+        try {
+          const succeed =
+            await customerAccountApi.withdrawFromMainAccountToMobileMoney(
+              customer!.id,
+              transferData
+            );
+          setCurrentStep("success");
+        } catch (error: any) {
+          // console.log(error);
+          toast.error(error.response.data.error.message);
+        } finally {
+          setLoading(false);
+        }
+      default:
+        return null;
     }
   };
 
@@ -163,6 +189,7 @@ export default function TransfersPage() {
             transferData={transferData}
             onConfirm={handleConfirmTransfer}
             onEdit={() => setCurrentStep("form")}
+            loading={loading}
           />
         )}
 
